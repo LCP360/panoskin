@@ -1,0 +1,15 @@
+{
+  "name": "Panoskin",
+  "version": "1.0.0",
+  "main": "./panoskin.js",
+  "description": "Client Library for Panoskin viewer",
+  "ignore": [
+    "example.html"
+  ],
+  "homepage": "http://panoskin.lcp360.com",
+  "keywords": [
+    "panoskin",
+    "Google business view",
+    "virtual tours"
+  ]
+}
