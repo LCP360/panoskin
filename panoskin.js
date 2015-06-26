@@ -83,14 +83,14 @@ PANOSKIN.event(window, 'message', function (e) {
 
     var domain = e.origin.split('viewer.')[1] || e.origin,
         data = JSON.parse(e.data);
-        domain = domain.split('.com')[0] || domain;
+        domain = domain.split('.com')[0] || domain,
+        domain = domain.toLowerCase();
 
-	/*
-	TODO
-    if (domain.toLowerCase() !== "lcp360") return;
-    else if (LCP360[data.fnc]) LCP360[data.fnc](data.param);
-	*/
+	console.log(domain)
+
+    if (domain == "panoskin" || domain == "lcp360" || domain == "localhost") {
+        PANOSKIN[data.fnc](data.param);
+    }
 	
-	PANOSKIN[data.fnc](data.param);
  
 });
