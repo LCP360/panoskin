@@ -81,16 +81,19 @@ var PANOSKIN = {
 // Cross Frame Event
 PANOSKIN.event(window, 'message', function (e) {
 
-    var domain = e.origin.split('viewer.')[1] || e.origin,
-        data = JSON.parse(e.data);
-        domain = domain.split('.com')[0] || domain,
-        domain = domain.toLowerCase();
+    var domain = e.origin
+                  .replace("http://", "")
+                  .replace("https://", "")
+                  .replace("viewer.", "")
+                  .replace("panoskin.", "")
+                  .toLowerCase()
+                  .split('.com')[0];
 
-	console.log(domain)
+
+    var data = JSON.parse(e.data);
 
     if (domain == "panoskin" || domain == "lcp360" || domain == "localhost") {
         PANOSKIN[data.fnc](data.param);
     }
-	
- 
+     
 });
