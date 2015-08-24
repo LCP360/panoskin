@@ -15,25 +15,35 @@ var PANOSKIN = {
         iframe.style.border = "none";
         iframe.frameBorder = "none";
         iframe.setAttribute('allowtransparency', 'true');
+        iframe.setAttribute('allowfullscreen', 'true');
+        iframe.setAttribute('webkitallowfullscreen', 'true');
+        iframe.setAttribute('mozallowfullscreen', 'true');
         iframe.setAttribute('scrolling', 'no');
         iframe.className = "ps_panoskinTour";
+
 
         var pano = document.getElementById(id);
         pano.appendChild(iframe);
 
         pano.addEventListener("enterFullScreen", function () {
 
-            /*if (pano.requestFullscreen) pano.requestFullscreen();
-            else if (pano.msRequestFullscreen) pano.msRequestFullscreen();
-            else if (pano.mozRequestFullScreen) pano.mozRequestFullScreen();
-            else if (pano.webkitRequestFullscreen) pano.webkitRequestFullscreen();
-            else if (pano.webkitRequestFullScreen) pano.webkitRequestFullScreen();*/
+            var e = pano;
+            e.setAttribute('data-attr-fullscreen', 'true');
+            e.setAttribute('data-attr-style-bk', e.getAttribute('style') || '');
+            e.setAttribute('style', 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000000;max-width:100%;max-height:100%;');
 
         });
 
-        pano.addEventListener("", function () {
+        pano.addEventListener("exitFullScreen", function () {
 
+            var e = pano;
+            e.removeAttribute('data-attr-fullscreen');
+            e.setAttribute('style', e.getAttribute('data-attr-style-bk') || '');
+            e.removeAttribute('data-attr-style-bk');
         });
+
+
+
 
     },
     event: function(el, event, fnc) {
@@ -76,27 +86,16 @@ var PANOSKIN = {
         var id = param.id;
         var e = PANOSKIN.fullscreenedTour = document.getElementById(id);
 
-        var enterFullScreen = function () {
-            
-            PANOSKIN.fireEvent(e, "enterFullScreen")
 
-            e.setAttribute('data-attr-fullscreen', 'true');
-            e.setAttribute('data-attr-style-bk', e.getAttribute('style') || '');
-            e.setAttribute('style', 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000000;max-width:100%;max-height:100%;');
-            
-        }
+        if (e.getAttribute('data-attr-fullscreen')) PANOSKIN.fireEvent(e, "exitFullScreen");
+        else PANOSKIN.fireEvent(e, "enterFullScreen");
+    },
+    exitFullScreen: function (param){
 
-        var exitFullScreen = function () {
+        var id = param.id;
+        var e = PANOSKIN.fullscreenedTour = document.getElementById(id);
 
-            PANOSKIN.fireEvent(e, "exitFullScreen")
-
-            e.removeAttribute('data-attr-fullscreen');
-            e.setAttribute('style', e.getAttribute('data-attr-style-bk') || '');
-            e.removeAttribute('data-attr-style-bk');
-        }
-
-        if (e.getAttribute('data-attr-fullscreen')) exitFullScreen();
-        else enterFullScreen();
+        PANOSKIN.fireEvent(e, "exitFullScreen");
     },
     redirect: function(param) {
         if (param.url) document.location = param.url;
