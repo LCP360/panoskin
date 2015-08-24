@@ -2,21 +2,39 @@ var PANOSKIN = {
 
     createViewer: function(obj) {
 
-        var id = obj.id,
-            tour = obj.tour,
-            url = (obj.dev) ? document.domain + ":" + location.port : 'panoskin.lcp360.com';
+        var id = obj.id;
+        var tour = obj.tour;
+        var url = (obj.dev) ? document.domain + ":" + location.port : 'panoskin.com';
 
         if (!obj.id || !obj.tour) return console.log('Please specifiy the id and tour link');
 
         var iframe = document.createElement('iframe'), frameSrc = "//" + url + '/_.html?id=' + id + '&tour=' + tour;
         iframe.src = (obj.legacy) ? frameSrc + "&legacy=true" : frameSrc;
-        iframe.style.width = "inherit";
-        iframe.style.height = "inherit";
+        iframe.style.width = "100%";
+        iframe.style.height = "100%";
         iframe.style.border = "none";
         iframe.frameBorder = "none";
         iframe.setAttribute('allowtransparency', 'true');
         iframe.setAttribute('scrolling', 'no');
-        document.getElementById(id).appendChild(iframe);
+        iframe.className = "ps_panoskinTour";
+
+        var pano = document.getElementById(id);
+        pano.appendChild(iframe);
+
+        pano.addEventListener("enterFullScreen", function () {
+
+            /*if (pano.requestFullscreen) pano.requestFullscreen();
+            else if (pano.msRequestFullscreen) pano.msRequestFullscreen();
+            else if (pano.mozRequestFullScreen) pano.mozRequestFullScreen();
+            else if (pano.webkitRequestFullscreen) pano.webkitRequestFullscreen();
+            else if (pano.webkitRequestFullScreen) pano.webkitRequestFullScreen();*/
+
+        });
+
+        pano.addEventListener("", function () {
+
+        });
+
     },
     event: function(el, event, fnc) {
 
@@ -27,50 +45,58 @@ var PANOSKIN = {
     GA: function(param) {
 
         // Fire Analytics
-        var _gaq = _gaq || [];
+        window._gaq = window._gaq || [];
 
         if (param.trackPageView) {
-
-            console.log('Track Page View: ' + param.trackPageView);
-            _gaq.push(['_trackPageview', param.trackPageView]);
+            console.log('Tracking event ' + param.trackPageView)
+            window._gaq.push(['_trackPageview', param.trackPageView]);
         }
 
-        // Debug Mode
-        if (param.panoid && param.debug) console.log("Moving to pano: " + param.panoid + "\n\n" + "Tracking as: " + param.trackPageView);
-        else if (param.debug) console.log("Tracking as: " + param.trackPageView);
         if (param.redirect) document.location.href = param.redirect;
+
+    },
+    fireEvent: function (element, event) {
+
+       if (document.createEvent) {
+           // dispatch for firefox + others
+           var evt = document.createEvent("HTMLEvents");
+           evt.initEvent(event, true, true ); // event type,bubbling,cancelable
+           return !element.dispatchEvent(evt);
+       } else {
+           // dispatch for IE
+           var evt = document.createEventObject();
+           return element.fireEvent('on'+event,evt)
+       }
 
     },
     fullScreen: function(param) {
 
-        var id = param.id,
-            prefix = ["webkit", "moz", "o", "ms", ""],
-            fullScreenFnc = function(e, r) {
-                for (var i, f, t = 0; t < prefix.length && !e[i];) {
-                    if (i = r, "" == prefix[t] && (i = i.substr(0, 1).toLowerCase() + i.substr(1)), i = prefix[t] + i, f = typeof e[i], "undefined" != f) return prefix = [prefix[t]], "function" == f ? e[i]() : e[i];
-                    t++
-                }
-            };
+        if (!param.id) return;
 
-        if (!id) return;
+        var id = param.id;
+        var e = PANOSKIN.fullscreenedTour = document.getElementById(id);
 
-        var el = document.getElementById(id);
+        var enterFullScreen = function () {
+            
+            PANOSKIN.fireEvent(e, "enterFullScreen")
 
-        if (el.getAttribute('data-attr-fullscreen') || fullScreenFnc(document, "FullScreen") || fullScreenFnc(document, "IsFullScreen")) {
-
-            el.setAttribute('style', el.getAttribute('data-attr-style-bk'));
-            el.removeAttribute('data-attr-style-bk');
-            el.removeAttribute('data-attr-fullscreen');
-            fullScreenFnc(document, "CancelFullScreen");
-
-        } else {
-
-            fullScreenFnc(el, "RequestFullScreen");
-            el.setAttribute('data-attr-style-bk', el.getAttribute('style'));
-            el.setAttribute('style', 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000000; max-width: 100%; max-height: 100%;');
-            el.setAttribute('data-attr-fullscreen', 'true');
+            e.setAttribute('data-attr-fullscreen', 'true');
+            e.setAttribute('data-attr-style-bk', e.getAttribute('style') || '');
+            e.setAttribute('style', 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000000;max-width:100%;max-height:100%;');
+            
         }
 
+        var exitFullScreen = function () {
+
+            PANOSKIN.fireEvent(e, "exitFullScreen")
+
+            e.removeAttribute('data-attr-fullscreen');
+            e.setAttribute('style', e.getAttribute('data-attr-style-bk') || '');
+            e.removeAttribute('data-attr-style-bk');
+        }
+
+        if (e.getAttribute('data-attr-fullscreen')) exitFullScreen();
+        else enterFullScreen();
     },
     redirect: function(param) {
         if (param.url) document.location = param.url;
@@ -78,21 +104,23 @@ var PANOSKIN = {
 }
 
 
-// Cross Frame Event
+// Cross Frame Event from panoskin.com
 PANOSKIN.event(window, 'message', function (e) {
 
     var domain = e.origin
+                  .split('.com')[0]
                   .replace("http://", "")
                   .replace("https://", "")
                   .replace("viewer.", "")
                   .replace("panoskin.", "")
-                  .toLowerCase()
-                  .split('.com')[0];
-
+                  .replace("www.", "")
+                  .split(':')[0]
+                  .toLowerCase();
 
     var data = JSON.parse(e.data);
 
-    if (domain == "panoskin" || domain == "lcp360" || domain == "localhost") {
+
+    if (domain == "panoskin" || domain == "localhost") {
         PANOSKIN[data.fnc](data.param);
     }
      
