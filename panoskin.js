@@ -1,15 +1,36 @@
+// 
 var PANOSKIN = {
 
     createViewer: function(obj) {
 
         var id = obj.id;
         var tour = obj.tour;
-        var url = (obj.dev) ? document.domain + ":" + location.port : 'panoskin.com';
+        var url = (document.domain.indexOf('localhost') > -1) ? "localhost:8080" : 'viewer.panoskin.com';
+        var legacy = obj.legacy;
+        var campusMapStart = obj.campusMapStart;
+        var panoStart = obj.panoStart;
 
         if (!obj.id || !obj.tour) return console.log('Please specifiy the id and tour link');
 
-        var iframe = document.createElement('iframe'), frameSrc = "//" + url + '/_.html?id=' + id + '&tour=' + tour;
-        iframe.src = (obj.legacy) ? frameSrc + "&legacy=true" : frameSrc;
+        var iframe = document.createElement('iframe'), 
+            frameSrc = "//" + url + '/_.html?id=' + id + '&tour=' + tour + '&iframed=true';
+
+        /** Need for PanoStart override and Share this scene **/
+        if (url.indexOf('localhost') > -1) frameSrc += "&admin=true";
+        if (legacy) frameSrc += "&legacy=true";
+        if (campusMapStart) frameSrc += "&campusMapStart=true";
+        if (panoStart) {
+            if (panoStart.pano) frameSrc += "&pano="+panoStart.pano;
+            if (panoStart.pov) {
+              var pov = panoStart.pov;
+              if (pov.heading) frameSrc += "&heading="+pov.heading;
+              if (pov.pitch) frameSrc += "&pitch="+pov.pitch;
+              if (pov.zoom) frameSrc += "&zoom="+pov.zoom;
+            }
+        }
+
+
+        iframe.src = frameSrc;
         iframe.style.width = "100%";
         iframe.style.height = "100%";
         iframe.style.border = "none";
@@ -23,13 +44,14 @@ var PANOSKIN = {
 
 
         var pano = document.getElementById(id);
-        pano.appendChild(iframe);
+            pano.appendChild(iframe);
+
+        var style = pano.getAttribute('style') || '';
 
         pano.addEventListener("enterFullScreen", function () {
 
             var e = pano;
             e.setAttribute('data-attr-fullscreen', 'true');
-            e.setAttribute('data-attr-style-bk', e.getAttribute('style') || '');
             e.setAttribute('style', 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1000000;max-width:100%;max-height:100%;');
 
         });
@@ -38,13 +60,19 @@ var PANOSKIN = {
 
             var e = pano;
             e.removeAttribute('data-attr-fullscreen');
-            e.setAttribute('style', e.getAttribute('data-attr-style-bk') || '');
-            e.removeAttribute('data-attr-style-bk');
+            e.setAttribute('style', style);
         });
 
+    },
+    popup: function (obj) {
 
+      var obj = obj || {};
+      var url = obj.url;
+      var width   = obj.width || 500;
+      var height   = obj.height || 500;
+      var name = obj.name || '_blank';
 
-
+      window.open(url, name,'left=20,top=20,width='+width+',height='+height+',toolbar=1,resizable=0')
     },
     event: function(el, event, fnc) {
 
