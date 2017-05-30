@@ -1,26 +1,27 @@
-// 
+//
 var PANOSKIN = {
 
     createViewer: function(obj) {
 
         var id = obj.id;
         var tour = obj.tour;
-        var url = (document.domain.indexOf('localhost') > -1) ? "localhost:8080" : 'viewer.panoskin.com';
+        var url = (obj.dev) ? document.domain + ":" + location.port : 'viewer.panoskin.com';
         var legacy = obj.legacy;
+        var admin = obj.admin;
         var campusMapStart = obj.campusMapStart;
         var panoStart = obj.panoStart;
 
         if (!obj.id || !obj.tour) return console.log('Please specifiy the id and tour link');
 
-        var iframe = document.createElement('iframe'), 
-            frameSrc = "//" + url + '/_.html?id=' + id + '&tour=' + tour + '&iframed=true';
+        var iframe = document.createElement('iframe');
+        var frameSrc = "//" + url + '/?id=' + id + '&tour=' + tour;
 
         /** Need for PanoStart override and Share this scene **/
-        if (url.indexOf('localhost') > -1) frameSrc += "&admin=true";
         if (legacy) frameSrc += "&legacy=true";
+        if (admin) frameSrc += "&admin=true";
         if (campusMapStart) frameSrc += "&campusMapStart=true";
         if (panoStart) {
-            if (panoStart.pano) frameSrc += "&pano="+panoStart.pano;
+            if (panoStart.panoid) frameSrc += "&pano="+panoStart.panoid;
             if (panoStart.pov) {
               var pov = panoStart.pov;
               if (pov.heading) frameSrc += "&heading="+pov.heading;
@@ -126,6 +127,8 @@ var PANOSKIN = {
         PANOSKIN.fireEvent(e, "exitFullScreen");
     },
     redirect: function(param) {
+
+        //if (param.url) document.location = param.url;
         if (param.url) document.location = param.url;
     }
 }
@@ -150,5 +153,5 @@ PANOSKIN.event(window, 'message', function (e) {
     if (domain == "panoskin" || domain == "localhost") {
         PANOSKIN[data.fnc](data.param);
     }
-     
+
 });
