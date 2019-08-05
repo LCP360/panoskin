@@ -1,6 +1,6 @@
 {
   "name": "Panoskin",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "main": "./panoskin.js",
   "description": "Client Library for Panoskin viewer",
   "ignore": [

@@ -12,6 +12,8 @@ var PANOSKIN = {
         var panoStart = obj.panoStart
         var forceSSL = obj.forceSSL || false
         var forceNoSSL = obj.forceNoSSL || false
+        var themeId = obj.themeId
+        var hideFullscreen = obj.hideFullscreen
 
         this.gaSettings = obj.ga || {}
 
@@ -23,7 +25,7 @@ var PANOSKIN = {
         if (forceSSL) frameSrc = 'https:' + frameSrc
         if (forceNoSSL) frameSrc = 'http:' + frameSrc
 
-        /** Need for PanoStart override and Share this scene **/
+        // PanoStart
         if (legacy) frameSrc += "&legacy=true";
         if (admin) frameSrc += "&admin=true";
         if (campusMapStart) frameSrc += "&campusMapStart=true";
@@ -37,6 +39,11 @@ var PANOSKIN = {
             }
         }
 
+        // Select theme
+        if (themeId) frameSrc += "&themeId=" + themeId
+
+        // Fullscreen
+        if (hideFullscreen) frameSrc += "&hideFullscreen=true"
 
         iframe.src = frameSrc;
         iframe.style.width = "100%";
