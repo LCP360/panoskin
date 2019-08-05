@@ -4,8 +4,7 @@ var PANOSKIN = {
 
         var id = obj.id
         var tour = obj.tour
-        //var url = (obj.dev) ? document.domain + ":" + location.port : 'viewer.panoskin.com'
-        var url = (obj.dev) ? "localhost:8080" : 'viewer.panoskin.com'
+        var url = (obj.domain) ? obj.domain : 'viewer.panoskin.com'
         var legacy = obj.legacy
         var admin = obj.admin
         var campusMapStart = obj.campusMapStart
