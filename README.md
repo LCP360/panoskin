@@ -37,7 +37,7 @@ Some optional CSS to make your container fluid
 Versioning
 ```bash
 git add --all
-git commit -m "Releasing v1.0.7"
-git tag v1.0.7
+git commit -m "Releasing v1.0.8"
+git tag v1.0.8
 git push origin master --tags
 ```

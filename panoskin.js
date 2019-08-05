@@ -12,7 +12,7 @@ var PANOSKIN = {
         var forceSSL = obj.forceSSL || false
         var forceNoSSL = obj.forceNoSSL || false
         var themeId = obj.themeId
-        var hideFullscreen = obj.hideFullscreen
+        var hideFullScreen = obj.hideFullScreen
 
         this.gaSettings = obj.ga || {}
 
@@ -38,11 +38,11 @@ var PANOSKIN = {
             }
         }
 
-        // Select theme
+        // Select Theme
         if (themeId) frameSrc += "&themeId=" + themeId
 
-        // Fullscreen
-        if (hideFullscreen) frameSrc += "&hideFullscreen=true"
+        // Hide Full Screen
+        if (hideFullScreen) frameSrc += "&hideFullScreen=true"
 
         iframe.src = frameSrc;
         iframe.style.width = "100%";
