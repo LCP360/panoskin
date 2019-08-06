@@ -13,6 +13,7 @@ var PANOSKIN = {
         var forceNoSSL = obj.forceNoSSL || false
         var themeId = obj.themeId
         var hideFullScreen = obj.hideFullScreen
+        var hideButtons = obj.hideButtons
 
         this.gaSettings = obj.ga || {}
 
@@ -44,6 +45,11 @@ var PANOSKIN = {
         // Hide Full Screen
         if (hideFullScreen) frameSrc += "&hideFullScreen=true"
 
+        // Hide hideButtons
+        if (hideButtons) {
+          frameSrc += "&hideButtons=" + hideButtons.join()
+        }
+        
         iframe.src = frameSrc;
         iframe.style.width = "100%";
         iframe.style.height = "100%";
