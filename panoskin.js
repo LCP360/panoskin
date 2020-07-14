@@ -61,6 +61,7 @@ var PANOSKIN = {
         iframe.setAttribute('mozallowfullscreen', 'true');
         iframe.setAttribute('scrolling', 'no');
 				iframe.setAttribute('allow', 'vr,gyroscope,accelerometer');
+        iframe.setAttribute('title', '3D Virtual Tour');
         iframe.className = "ps_panoskinTour";
 
 
